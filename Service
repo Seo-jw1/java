@@ -1,0 +1,58 @@
+// UserService.java
+package com.yourcompany.onlineshop.service;
+
+import com.yourcompany.onlineshop.entity.User;
+import com.yourcompany.onlineshop.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Transactional // 데이터 변경 작업에 트랜잭션 적용
+    public User registerUser(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Username already exists.");
+        }
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("Email already exists.");
+        }
+        // 실제 앱에서는 passwordEncoder.encode(user.getPassword()) 등으로 암호화
+        return userRepository.save(user);
+    }
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    // 로그인 로직 (Spring Security와 통합 시 더 복잡해짐)
+    public boolean login(String username, String password) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            // 실제 앱에서는 passwordEncoder.matches(password, user.getPassword())
+            return user.getPassword().equals(password); // 예시: 평문 비밀번호 비교
+        }
+        return false;
+    }
+
+    @Transactional
+    public User updateUser(Long userId, User updatedUser) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setAddress(updatedUser.getAddress());
+        existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
+        // 비밀번호 변경 로직 추가 (필요시)
+
+        return userRepository.save(existingUser);
+    }
+}
