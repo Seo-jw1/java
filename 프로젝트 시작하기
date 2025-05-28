@@ -1,0 +1,14 @@
+프로젝트 시작하기
+Java 및 IDE 설치: Java Development Kit (JDK 11 이상)와 IntelliJ IDEA 또는 Eclipse 같은 개발 환경을 설정합니다.
+MySQL 설치 및 데이터베이스 생성: MySQL 서버를 설치하고 onlineshopdb라는 이름의 데이터베이스를 생성합니다. (위의 SQL 스크립트 참고)
+Spring Boot 프로젝트 생성: Spring Initializr (https://start.spring.io/) 를 사용하여 다음 의존성을 포함하는 Maven/Gradle 프로젝트를 생성합니다:
+Spring Web
+Spring Data JPA
+MySQL Driver
+Thymeleaf
+Lombok (선택 사항)
+Spring Boot DevTools
+코드 작성: 위에 제시된 엔티티, 리포지토리, 서비스, 컨트롤러 클래스를 각 디렉토리에 맞게 작성합니다.
+설정 파일 업데이트: src/main/resources/application.properties 파일에 데이터베이스 연결 정보를 올바르게 입력합니다.
+애플리케이션 실행: OnlineShopApplication.java 파일을 실행하여 Spring Boot 애플리케이션을 시작합니다.
+웹 브라우저 접속: http://localhost:8080/products (또는 설정에 따라 다른 포트) 로 접속하여 애플리케이션을 확인합니다.
