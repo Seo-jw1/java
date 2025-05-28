@@ -1,0 +1,64 @@
+// UserRepository.java
+package com.yourcompany.onlineshop.repository;
+
+import com.yourcompany.onlineshop.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByUsername(String username);
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+}
+
+// ProductRepository.java
+package com.yourcompany.onlineshop.repository;
+
+import com.yourcompany.onlineshop.entity.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import java.util.List;
+
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    List<Product> findByProductNameContainingIgnoreCase(String keyword); // 상품명 검색
+    List<Product> findByCategoryCategoryId(Long categoryId); // 카테고리별 필터링
+
+    // 복합 검색 예시 (JPQL)
+    @Query("SELECT p FROM Product p WHERE " +
+           "(:keyword IS NULL OR LOWER(p.productName) LIKE %:keyword%) AND " +
+           "(:categoryId IS NULL OR p.category.categoryId = :categoryId)")
+    List<Product> searchProducts(@Param("keyword") String keyword, @Param("categoryId") Long categoryId);
+}
+
+// OrderRepository.java
+package com.yourcompany.onlineshop.repository;
+
+import com.yourcompany.onlineshop.entity.Order;
+import com.yourcompany.onlineshop.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface OrderRepository extends JpaRepository<Order, Long> {
+    List<Order> findByUser(User user); // 특정 사용자의 주문 내역 조회
+}
+
+// CategoryRepository.java
+package com.yourcompany.onlineshop.repository;
+
+import com.yourcompany.onlineshop.entity.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CategoryRepository extends JpaRepository<Category, Long> {
+    // 추가적인 쿼리 메서드가 필요할 경우 정의
+}
+
+// OrderItemRepository.java
+package com.yourcompany.onlineshop.repository;
+
+import com.yourcompany.onlineshop.entity.OrderItem;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
+    // 추가적인 쿼리 메서드가 필요할 경우 정의
+}
