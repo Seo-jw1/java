@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>장바구니</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>장바구니</h1>
+
+        <div th:if="${cartItems.isEmpty()}" class="empty-cart">
+            <p>장바구니에 담긴 상품이 없습니다.</p>
+            <a href="/products">상품 보러 가기</a>
+        </div>
+
+        <div th:unless="${cartItems.isEmpty()}" class="cart-items">
+            <div th:each="entry : ${cartItems}" class="cart-item">
+                <div class="item-info">
+                    <img th:src="${entry.key.imageUrl}" alt="상품 이미지">
+                    <span th:text="${entry.key.productName}">상품명</span>
+                </div>
+                <div class="item-actions">
+                    <form th:action="@{/cart/update}" method="post">
+                        <input type="hidden" name="productId" th:value="${entry.key.productId}">
+                        <input type="number" name="quantity" th:value="${entry.value}" min="1" max="99">
+                        <button type="submit">수정</button>
+                    </form>
+                    <form th:action="@{/cart/remove}" method="post">
+                        <input type="hidden" name="productId" th:value="${entry.key.productId}">
+                        <button type="submit">삭제</button>
+                    </form>
+                </div>
+                <span class="item-price" th:text="${#numbers.formatDecimal(entry.key.price * entry.value, 0, 'COMMA', 0, 'POINT')} + '원'"></span>
+            </div>
+            <div class="cart-total">
+                총 결제 금액: <span th:text="${#numbers.formatDecimal(cartItems.entrySet().stream().mapToDouble(e -> e.getKey().getPrice().doubleValue() * e.getValue()).sum(), 0, 'COMMA', 0, 'POINT')} + '원'"></span>
+            </div>
+            <div class="checkout-button">
+                <a href="/cart/checkout">주문하기</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
