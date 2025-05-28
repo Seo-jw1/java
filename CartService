@@ -1,0 +1,65 @@
+// CartService.java (가상의 장바구니 서비스)
+package com.yourcompany.onlineshop.service;
+
+import com.yourcompany.onlineshop.entity.Product;
+import com.yourcompany.onlineshop.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+// 이 서비스는 실제로는 데이터베이스에 저장되는 Cart 엔티티와 연동될 수 있습니다.
+// 여기서는 간단히 Map을 통해 구현 예시를 보여줍니다.
+// 실제 프로젝트에서는 Cart, CartItem 엔티티를 만들고 JPA로 관리해야 합니다.
+@Service
+public class CartService {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    // 실제로는 세션 또는 데이터베이스에 저장되는 장바구니 데이터
+    private Map<Long, Integer> cartItems = new HashMap<>(); // ProductId, Quantity
+
+    public void addProductToCart(Long productId, Integer quantity) {
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            throw new IllegalArgumentException("Product not found with ID: " + productId);
+        }
+        // 재고 확인 등 추가 로직
+        cartItems.merge(productId, quantity, Integer::sum);
+    }
+
+    public Map<Product, Integer> getCartDetails() {
+        Map<Product, Integer> details = new HashMap<>();
+        for (Map.Entry<Long, Integer> entry : cartItems.entrySet()) {
+            productRepository.findById(entry.getKey()).ifPresent(product -> {
+                details.put(product, entry.getValue());
+            });
+        }
+        return details;
+    }
+
+    public void updateCartItemQuantity(Long productId, Integer quantity) {
+        if (cartItems.containsKey(productId)) {
+            if (quantity <= 0) {
+                cartItems.remove(productId);
+            } else {
+                cartItems.put(productId, quantity);
+            }
+        }
+    }
+
+    public void removeProductFromCart(Long productId) {
+        cartItems.remove(productId);
+    }
+
+    public void clearCart() {
+        cartItems.clear();
+    }
+
+    public Map<Long, Integer> getCartProductQuantities() {
+        return new HashMap<>(cartItems);
+    }
+}
