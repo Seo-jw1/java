@@ -1,0 +1,22 @@
+src
+├── main
+│   ├── java
+│   │   └── com
+│   │       └── yourcompany
+│   │           └── onlineshop
+│   │               ├── OnlineShopApplication.java
+│   │               ├── controller    // 웹 요청 처리 (MVC Controller)
+│   │               ├── dto         // 데이터 전송 객체 (Data Transfer Object)
+│   │               ├── entity      // 데이터베이스 테이블과 매핑되는 엔티티
+│   │               ├── repository  // 데이터베이스 CRUD 연산 (Spring Data JPA)
+│   │               └── service     // 비즈니스 로직 처리
+│   └── resources
+│       ├── application.properties  // Spring 설정 파일
+│       ├── static                  // 정적 리소스 (CSS, JS, 이미지)
+│       └── templates               // Thymeleaf 템플릿 파일
+└── test
+    └── java
+        └── com
+            └── yourcompany
+                └── onlineshop
+                    └── OnlineShopApplicationTests.java
