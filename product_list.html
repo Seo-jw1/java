@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 목록</title>
+    <link rel="stylesheet" href="/css/style.css"> </head>
+<body>
+    <div class="container">
+        <h1>상품 목록</h1>
+
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <form action="/products" method="get" class="search-form">
+            <input type="text" name="search" placeholder="상품명 검색..." th:value="${param.search}">
+            <select name="categoryId">
+                <option value="">-- 카테고리 선택 --</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.categoryId}"
+                        th:text="${category.categoryName}"
+                        th:selected="${param.categoryId != null and param.categoryId == category.categoryId}">
+                </option>
+            </select>
+            <button type="submit">검색/필터링</button>
+        </form>
+
+        <div class="product-grid">
+            <div th:each="product : ${products}" class="product-item">
+                <a th:href="@{/products/{id}(id=${product.productId})}">
+                    <img th:src="${product.imageUrl}" alt="상품 이미지">
+                    <h3 th:text="${product.productName}">상품 이름</h3>
+                    <p th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'">10000원</p>
+                </a>
+                <form th:action="@{/cart/add}" method="post">
+                    <input type="hidden" name="productId" th:value="${product.productId}">
+                    <input type="number" name="quantity" value="1" min="1" max="99">
+                    <button type="submit">장바구니 담기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
